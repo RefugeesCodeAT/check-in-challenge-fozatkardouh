@@ -7,14 +7,15 @@ typedef struct PARTICIPANT
 {
     string name;
     bool checked_in;
-    struct PARTICIPANT* next;
+    struct PARTICIPANT * next;
 }
 PARTICIPANT;
 
-PARTICIPANT* participants = NULL;
+PARTICIPANT * root = NULL;
 
 #define CHECKED_IN true
 #define CHECKED_OUT false
+#define SIZE_OF_PARTICIPANT sizeof(PARTICIPANT)
 
 string get_user_input();
 bool perform(string user_input);
@@ -25,6 +26,11 @@ void remove_one(string participant_name);
 void check_one(string participant_name);
 void display_participants();
 void free_memory();
+
+// My functions
+void add_To_The_Last_Participant(PARTICIPANT * new_Participant);
+void display_Participant(PARTICIPANT * participant);
+PARTICIPANT * free_All(PARTICIPANT * participant);
 
 int main(void)
 {
@@ -86,7 +92,33 @@ void add_one(string participant_name)
 {
     printf("add %s\n", participant_name);
 
-    // TODO
+    PARTICIPANT * new_Participant = malloc(SIZE_OF_PARTICIPANT);
+    new_Participant->name = participant_name;
+    new_Participant->checked_in = CHECKED_OUT;
+    new_Participant->next = NULL;
+
+    if (root == NULL)
+    {
+        root = malloc(SIZE_OF_PARTICIPANT);
+        root->name = NULL;
+        root->checked_in = NULL;
+        root->next = new_Participant;
+    }
+    else
+    {
+        add_To_The_Last_Participant(new_Participant);
+    }
+
+}
+
+void add_To_The_Last_Participant(PARTICIPANT * new_Participant)
+{
+    PARTICIPANT * ptr = root;
+    while (ptr->next != NULL)
+    {
+        ptr = ptr->next;
+    }
+    ptr->next = new_Participant;
 }
 
 /*
@@ -96,7 +128,15 @@ void remove_one(string participant_name)
 {
     printf("remove %s\n", participant_name);
 
-    // TODO
+    PARTICIPANT * previos_Participant = root;
+    while (previos_Participant->next != NULL && strcmp(previos_Participant->next->name, participant_name))
+    {
+        previos_Participant = previos_Participant->next;
+    }
+    PARTICIPANT * next_Participant = previos_Participant->next->next;
+    free(previos_Participant->next);
+    previos_Participant->next = NULL;
+    previos_Participant->next = next_Participant;
 }
 
 /*
@@ -106,7 +146,12 @@ void check_one(string participant_name)
 {
     printf("check %s\n", participant_name);
 
-    // TODO
+    PARTICIPANT * ptr = root->next;
+    while (ptr->next != NULL && strcmp(ptr->name, participant_name))
+    {
+        ptr = ptr->next;
+    }
+    ptr->checked_in = CHECKED_IN;
 }
 
 /*
@@ -115,16 +160,32 @@ void check_one(string participant_name)
 void display_participants()
 {
     printf("display\n");
-
-    // TODO
+    display_Participant(root->next);
 }
 
+void display_Participant(PARTICIPANT * participant)
+{
+    printf("Name: %s\nChecked in?: %s\n", participant->name, participant->checked_in ? "true" : "false");
+    if (participant->next != NULL)
+    {
+        display_Participant(participant->next);
+    }
+}
 /*
     Free all memory used by participants in the list
 */
 void free_memory()
 {
     printf("freeing stuff.\n");
+    root = free_All(root);
+}
 
-    // TODO
+PARTICIPANT * free_All(PARTICIPANT * participant)
+{
+    if(participant->next != NULL)
+    {
+        participant->next = free_All(participant->next);
+    }
+    free(participant);
+    return NULL;
 }
