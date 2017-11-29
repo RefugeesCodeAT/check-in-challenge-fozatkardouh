@@ -2,6 +2,7 @@
 #include <cs50.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 typedef struct PARTICIPANT
 {
@@ -28,6 +29,7 @@ void display_participants();
 void free_memory();
 
 // My functions
+bool check_Input_If_Invalid(string input);
 void add_To_The_Last_Participant(PARTICIPANT * new_Participant);
 void display_Participant(PARTICIPANT * participant);
 PARTICIPANT * free_All(PARTICIPANT * participant);
@@ -53,6 +55,11 @@ string get_user_input()
 // Performs the action from the "user_input"
 bool perform(string user_input)
 {
+    if(check_Input_If_Invalid(user_input))
+    {
+        printf("Unknown command!\n");
+        return true;
+    }
     // Read the string of user input into two variables
     string action_name = strtok(user_input, " ");
     string participant_name = strtok(NULL, " ");
@@ -87,7 +94,23 @@ bool perform(string user_input)
         return false;
     }
 
+    printf("Unknown command!\n");
     return true;
+}
+
+bool check_Input_If_Invalid(string input)
+{
+    for (int i = 0, j = strlen(input); i < j; i++)
+    {
+        if (input[i] == ' ')
+        {
+            if (i + 1 < j && !isalpha(input[i + 1]))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 /*
@@ -210,10 +233,13 @@ void free_memory()
 
 PARTICIPANT * free_All(PARTICIPANT * participant)
 {
-    if(participant->next != NULL)
+    if (participant != NULL)
     {
-        participant->next = free_All(participant->next);
+        if(participant->next != NULL)
+        {
+            participant->next = free_All(participant->next);
+        }
+        free(participant);
     }
-    free(participant);
     return NULL;
 }
