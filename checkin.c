@@ -56,13 +56,18 @@ bool perform(string user_input)
 {
     if(check_Input_If_Invalid(user_input))
     {
-        printf("Unknown command!\n");
+        printf("Unknown command!\nType help for available commands\n");
         return true;
     }
     // Read the string of user input into two variables
     string action_name = strtok(user_input, " ");
     string participant_name = strtok(NULL, " ");
 
+    if(strcmp(action_name, "help") == 0)
+    {
+        printf("Available commands:\nadd -name-\nremove -name-\nswitch -name-\ndisplay -name-\nexit\n");
+        return true;
+    }
     if(strcmp(action_name, "add") == 0)
     {
         add_one(participant_name);
@@ -88,7 +93,7 @@ bool perform(string user_input)
         return false;
     }
 
-    printf("Unknown command!\n");
+    printf("Unknown command!\nType help for available commands\n");
     return true;
 }
 
