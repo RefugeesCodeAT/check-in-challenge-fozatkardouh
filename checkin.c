@@ -23,8 +23,7 @@ bool perform(string user_input);
 
 void add_one(string participant_name);
 void remove_one(string participant_name);
-void check_one(string participant_name);
-void uncheck_one(string participant_name);
+void switch_one(string participant_name);;
 void display_participants();
 void free_memory();
 
@@ -74,14 +73,9 @@ bool perform(string user_input)
         remove_one(participant_name);
         return true;
     }
-    if(strcmp(action_name, "check") == 0)
+    if(strcmp(action_name, "switch") == 0)
     {
-        check_one(participant_name);
-        return true;
-    }
-    if(strcmp(action_name, "uncheck") == 0)
-    {
-        uncheck_one(participant_name);
+        switch_one(participant_name);
         return true;
     }
     if(strcmp(action_name, "display") == 0)
@@ -181,28 +175,28 @@ void remove_one(string participant_name)
 /*
     Check a participant from the list in or out
 */
-void check_one(string participant_name)
+void switch_one(string participant_name)
 {
-    printf("check %s\n", participant_name);
+    printf("switching %s\n", participant_name);
 
-    PARTICIPANT * ptr = root->next;
-    while (ptr->next != NULL && strcmp(ptr->name, participant_name))
+    PARTICIPANT * ptr = root;
+    while (ptr->next != NULL)
     {
+        if (strcmp(ptr->next->name, participant_name) == 0)
+        {
+            if(ptr->next->checked_in)
+            {
+                ptr->next->checked_in = CHECKED_OUT;
+            }
+            else
+            {
+                ptr->next->checked_in = CHECKED_IN;
+            }
+            return;
+        }
         ptr = ptr->next;
     }
-    ptr->checked_in = CHECKED_IN;
-}
-
-void uncheck_one(string participant_name)
-{
-    printf("uncheck %s\n", participant_name);
-
-    PARTICIPANT * ptr = root->next;
-    while (ptr->next != NULL && strcmp(ptr->name, participant_name))
-    {
-        ptr = ptr->next;
-    }
-    ptr->checked_in = CHECKED_OUT;
+    printf("Name not found!\n");
 }
 
 /*
