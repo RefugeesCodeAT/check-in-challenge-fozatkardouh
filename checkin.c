@@ -20,10 +20,10 @@ PARTICIPANT * root = NULL;
 string get_user_input();
 bool perform(string user_input);
 
-// TODO: Functions to implement
 void add_one(string participant_name);
 void remove_one(string participant_name);
 void check_one(string participant_name);
+void uncheck_one(string participant_name);
 void display_participants();
 void free_memory();
 
@@ -72,6 +72,11 @@ bool perform(string user_input)
         check_one(participant_name);
         return true;
     }
+    if(strcmp(action_name, "uncheck") == 0)
+    {
+        uncheck_one(participant_name);
+        return true;
+    }
     if(strcmp(action_name, "display") == 0)
     {
        display_participants();
@@ -116,6 +121,11 @@ void add_To_The_Last_Participant(PARTICIPANT * new_Participant)
     PARTICIPANT * ptr = root;
     while (ptr->next != NULL)
     {
+        if (strcmp(ptr->next->name, new_Participant->name) == 0)
+        {
+            printf("Name already exists!\n");
+            return;
+        }
         ptr = ptr->next;
     }
     ptr->next = new_Participant;
@@ -132,6 +142,12 @@ void remove_one(string participant_name)
     while (previos_Participant->next != NULL && strcmp(previos_Participant->next->name, participant_name))
     {
         previos_Participant = previos_Participant->next;
+    }
+
+    if (previos_Participant->next == NULL)
+    {
+        printf("Name doesn't exist!\n");
+        return;
     }
     PARTICIPANT * next_Participant = previos_Participant->next->next;
     free(previos_Participant->next);
@@ -154,6 +170,18 @@ void check_one(string participant_name)
     ptr->checked_in = CHECKED_IN;
 }
 
+void uncheck_one(string participant_name)
+{
+    printf("uncheck %s\n", participant_name);
+
+    PARTICIPANT * ptr = root->next;
+    while (ptr->next != NULL && strcmp(ptr->name, participant_name))
+    {
+        ptr = ptr->next;
+    }
+    ptr->checked_in = CHECKED_OUT;
+}
+
 /*
     Display all participants and their status.
 */
@@ -165,7 +193,7 @@ void display_participants()
 
 void display_Participant(PARTICIPANT * participant)
 {
-    printf("Name: %s\nChecked in?: %s\n", participant->name, participant->checked_in ? "true" : "false");
+    printf("Name: %s\nChecked in? %s\n", participant->name, participant->checked_in ? "true" : "false");
     if (participant->next != NULL)
     {
         display_Participant(participant->next);
