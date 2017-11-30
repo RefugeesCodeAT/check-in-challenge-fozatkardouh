@@ -54,7 +54,7 @@ string get_user_input()
 // Performs the action from the "user_input"
 bool perform(string user_input)
 {
-    if(check_Input_If_Invalid(user_input))
+    if(check_Input_If_Invalid(user_input) || strcmp(user_input, "") == 0)
     {
         printf("Unknown command!\nType help for available commands\n");
         return true;
